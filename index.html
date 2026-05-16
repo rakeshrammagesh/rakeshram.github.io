@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rakeshram Magesh · VLSI · ASIC · 7nm FinFET</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg1: #010d1a;
+–bg2: #021525;
+–purple: #0369a1;
+–violet: #0ea5e9;
+–pink: #14b8a6;
+–cyan: #7dd3fc;
+–teal: #2dd4bf;
+–white: #f0f9ff;
+–muted: rgba(240,249,255,0.5);
+–glass: rgba(255,255,255,0.05);
+–glass-border: rgba(255,255,255,0.1);
+–glass-hover: rgba(255,255,255,0.09);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+background: var(–bg1);
+color: var(–white);
+font-family: ‘Outfit’, sans-serif;
+overflow-x: hidden;
+min-height: 100vh;
+}
+
+/* MESH GRADIENT BG */
+.mesh-bg {
+position: fixed;
+inset: 0;
+z-index: 0;
+background:
+radial-gradient(ellipse 80% 60% at 20% 10%, rgba(3,105,161,0.45) 0%, transparent 60%),
+radial-gradient(ellipse 60% 50% at 80% 20%, rgba(20,184,166,0.3) 0%, transparent 55%),
+radial-gradient(ellipse 70% 60% at 60% 80%, rgba(14,165,233,0.25) 0%, transparent 60%),
+radial-gradient(ellipse 50% 40% at 10% 70%, rgba(125,211,252,0.15) 0%, transparent 55%),
+linear-gradient(135deg, #010d1a 0%, #021525 50%, #010d1a 100%);
+pointer-events: none;
+}
+
+/* Animated orbs */
+.orb {
+position: fixed;
+border-radius: 50%;
+filter: blur(80px);
+opacity: 0.3;
+animation: drift 12s ease-in-out infinite alternate;
+pointer-events: none;
+z-index: 0;
+}
+.orb-1 { width: 500px; height: 500px; background: #0369a1; top: -150px; left: -100px; animation-delay: 0s; }
+.orb-2 { width: 400px; height: 400px; background: #14b8a6; top: 10%; right: -100px; animation-delay: -4s; }
+.orb-3 { width: 350px; height: 350px; background: #0ea5e9; bottom: 10%; left: 20%; animation-delay: -8s; }
+
+@keyframes drift {
+from { transform: translate(0, 0) scale(1); }
+to   { transform: translate(40px, 30px) scale(1.08); }
+}
+
+/* NAV */
+nav {
+position: fixed;
+top: 0; left: 0; right: 0;
+z-index: 100;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 1rem 3rem;
+background: rgba(1,13,26,0.7);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(–glass-border);
+}
+
+.nav-logo {
+font-family: ‘JetBrains Mono’, monospace;
+font-weight: 700;
+font-size: 0.9rem;
+background: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-decoration: none;
+letter-spacing: 0.05em;
+}
+
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.7rem;
+color: var(–muted);
+text-decoration: none;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+transition: color 0.2s;
+}
+.nav-links a:hover { color: var(–white); }
+
+/* GLASS CARD */
+.glass {
+background: var(–glass);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border: 1px solid var(–glass-border);
+border-radius: 16px;
+transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.glass:hover {
+background: var(–glass-hover);
+border-color: rgba(14,165,233,0.3);
+transform: translateY(-4px);
+}
+
+/* CONTENT */
+.content { position: relative; z-index: 1; }
+
+/* HERO */
+#hero {
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 7rem 2rem 4rem;
+text-align: center;
+}
+
+.hero-inner { max-width: 780px; }
+
+.hero-badge {
+display: inline-flex;
+align-items: center;
+gap: 0.5rem;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.7rem;
+color: #7dd3fc;
+letter-spacing: 0.15em;
+padding: 0.4rem 1.2rem;
+background: rgba(14,165,233,0.1);
+border: 1px solid rgba(14,165,233,0.3);
+border-radius: 100px;
+margin-bottom: 2rem;
+}
+.hero-badge::before {
+content: ‘’;
+width: 6px; height: 6px;
+background: #0ea5e9;
+border-radius: 50%;
+animation: blink 1.5s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.hero-name {
+font-size: clamp(2.8rem, 8vw, 5.5rem);
+font-weight: 800;
+line-height: 1;
+letter-spacing: -0.03em;
+margin-bottom: 1rem;
+}
+
+.grad-text {
+background: linear-gradient(135deg, var(–white) 0%, #7dd3fc 40%, #2dd4bf 70%, #0ea5e9 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.hero-sub {
+font-size: 1.05rem;
+color: var(–muted);
+line-height: 1.7;
+max-width: 560px;
+margin: 0 auto 2.5rem;
+font-weight: 300;
+}
+.hero-sub strong { color: var(–white); font-weight: 500; }
+
+.hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem; }
+
+.btn-grad {
+padding: 0.85rem 2.2rem;
+background: linear-gradient(135deg, #0369a1, #14b8a6);
+color: var(–white);
+border: none;
+border-radius: 100px;
+font-family: ‘Outfit’, sans-serif;
+font-size: 0.85rem;
+font-weight: 600;
+text-decoration: none;
+cursor: pointer;
+transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+box-shadow: 0 0 30px rgba(3,105,161,0.4);
+}
+.btn-grad:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 0 40px rgba(14,165,233,0.5); }
+
+.btn-glass {
+padding: 0.85rem 2.2rem;
+background: var(–glass);
+color: var(–white);
+border: 1px solid var(–glass-border);
+border-radius: 100px;
+font-family: ‘Outfit’, sans-serif;
+font-size: 0.85rem;
+font-weight: 500;
+text-decoration: none;
+cursor: pointer;
+transition: background 0.2s, transform 0.2s;
+backdrop-filter: blur(10px);
+}
+.btn-glass:hover { background: var(–glass-hover); transform: translateY(-2px); }
+
+/* Stats */
+.hero-stats {
+display: flex;
+justify-content: center;
+gap: 1px;
+overflow: hidden;
+border-radius: 16px;
+border: 1px solid var(–glass-border);
+background: var(–glass-border);
+backdrop-filter: blur(20px);
+}
+.stat {
+flex: 1;
+padding: 1.2rem 1rem;
+background: var(–glass);
+text-align: center;
+backdrop-filter: blur(20px);
+}
+.stat-num {
+font-size: 1.7rem;
+font-weight: 800;
+background: linear-gradient(135deg, #7dd3fc, #2dd4bf);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+display: block;
+margin-bottom: 0.2rem;
+}
+.stat-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+letter-spacing: 0.1em;
+text-transform: uppercase;
+}
+
+/* SECTIONS */
+section.content { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+.sec-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.68rem;
+color: #0ea5e9;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+margin-bottom: 0.5rem;
+}
+
+h2 {
+font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+font-weight: 800;
+letter-spacing: -0.02em;
+margin-bottom: 2.5rem;
+}
+h2 .g { background: linear-gradient(90deg, #0ea5e9, #2dd4bf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* SKILLS */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+
+.skill-card { padding: 1.5rem; border-radius: 16px; }
+
+.skill-icon { font-size: 1.4rem; margin-bottom: 0.8rem; }
+.skill-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(–white); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.62rem;
+padding: 0.25rem 0.65rem;
+background: rgba(14,165,233,0.1);
+color: #7dd3fc;
+border: 1px solid rgba(14,165,233,0.25);
+border-radius: 100px;
+letter-spacing: 0.03em;
+}
+
+/* PROJECTS */
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+
+.proj-card { padding: 1.8rem; border-radius: 20px; position: relative; overflow: hidden; }
+
+.proj-card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, #0ea5e9, #2dd4bf, transparent);
+opacity: 0;
+transition: opacity 0.3s;
+}
+.proj-card:hover::before { opacity: 1; }
+
+.proj-num {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.62rem;
+color: #0ea5e9;
+letter-spacing: 0.15em;
+margin-bottom: 0.7rem;
+opacity: 0.8;
+}
+
+.proj-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+.proj-date { font-family: ‘JetBrains Mono’, monospace; font-size: 0.65rem; color: var(–muted); margin-bottom: 1rem; }
+
+.proj-bullets { list-style: none; margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.proj-bullets li {
+font-size: 0.83rem;
+color: var(–muted);
+padding-left: 1.1rem;
+position: relative;
+line-height: 1.55;
+}
+.proj-bullets li::before { content: ‘▸’; position: absolute; left: 0; color: #0ea5e9; font-size: 0.7rem; top: 2px; }
+
+.proj-metrics {
+display: flex;
+gap: 0.6rem;
+flex-wrap: wrap;
+padding-top: 1rem;
+border-top: 1px solid var(–glass-border);
+}
+.metric {
+padding: 0.35rem 0.8rem;
+background: rgba(6,182,212,0.08);
+border: 1px solid rgba(6,182,212,0.2);
+border-radius: 100px;
+text-align: center;
+}
+.metric-val { font-family: ‘JetBrains Mono’, monospace; font-size: 0.75rem; font-weight: 700; color: var(–cyan); display: block; }
+.metric-lbl { font-size: 0.58rem; color: var(–muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* EDUCATION */
+.edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+.edu-card { padding: 2rem; border-radius: 20px; }
+
+.edu-school {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.7rem;
+color: #0ea5e9;
+letter-spacing: 0.08em;
+margin-bottom: 0.5rem;
+}
+.edu-degree { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.edu-detail { font-size: 0.83rem; color: var(–muted); line-height: 1.6; }
+.edu-gpa {
+display: inline-block;
+margin-top: 0.8rem;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.7rem;
+padding: 0.3rem 0.8rem;
+background: rgba(20,184,166,0.1);
+color: var(–teal);
+border: 1px solid rgba(20,184,166,0.3);
+border-radius: 100px;
+}
+
+/* CONTACT */
+#contact-sec { padding: 4rem 2rem; max-width: 700px; margin: 0 auto; text-align: center; }
+
+.contact-card {
+padding: 3rem 2.5rem;
+border-radius: 24px;
+position: relative;
+overflow: hidden;
+}
+
+.contact-card::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(135deg, rgba(3,105,161,0.15), rgba(20,184,166,0.1), rgba(14,165,233,0.1));
+pointer-events: none;
+}
+
+.contact-email {
+font-size: 1rem;
+font-weight: 600;
+color: #0ea5e9;
+text-decoration: none;
+display: block;
+margin: 1rem 0 0.5rem;
+transition: color 0.2s;
+}
+.contact-email:hover { color: #2dd4bf; }
+
+.contact-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.contact-links a {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.68rem;
+color: var(–muted);
+text-decoration: none;
+letter-spacing: 0.1em;
+transition: color 0.2s;
+}
+.contact-links a:hover { color: var(–white); }
+
+/* FOOTER */
+footer {
+text-align: center;
+padding: 2rem;
+border-top: 1px solid var(–glass-border);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.62rem;
+color: var(–muted);
+letter-spacing: 0.08em;
+position: relative;
+z-index: 1;
+}
+
+/* ANIMATIONS */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+nav { padding: 1rem 1.5rem; }
+.nav-links { display: none; }
+section.content { padding: 4rem 1.2rem; }
+.edu-grid { grid-template-columns: 1fr; }
+#contact-sec { padding: 3rem 1.2rem; }
+.hero-stats { flex-wrap: wrap; }
+.stat { min-width: 120px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="mesh-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- NAV -->
+
+<nav>
+  <a class="nav-logo" href="#">RM·7nm</a>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact-sec">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+
+<div class="content">
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">CLK↑ · VLSI · ASIC · 7nm FinFET · Available Summer 2026</div>
+    <h1 class="hero-name grad-text">Rakeshram<br>Magesh</h1>
+    <p class="hero-sub">
+      <strong>Electrical &amp; Computer Engineer</strong> specializing in full-stack ASIC design — from RTL synthesis to 7nm FinFET layout. M.S. student at <strong>Arizona State University</strong> · U.S. Citizen.
+    </p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-grad">View Projects</a>
+      <a href="mailto:rakeshrammagesh95@gmail.com" class="btn-glass">Get In Touch</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">4</span><span class="stat-label">ASIC Projects</span></div>
+      <div class="stat"><span class="stat-num">7nm</span><span class="stat-label">FinFET Tech</span></div>
+      <div class="stat"><span class="stat-num">3.32</span><span class="stat-label">GPA</span></div>
+      <div class="stat"><span class="stat-num">1000</span><span class="stat-label">MHz Clock</span></div>
+      <div class="stat"><span class="stat-num">32K+</span><span class="stat-label">Gates</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+
+<section class="content" id="skills">
+  <div class="sec-label">// 01 — Expertise</div>
+  <h2>Technical <span class="g">Skills</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card glass fade-up">
+      <div class="skill-icon">⚡</div>
+      <div class="skill-name">EDA &amp; Simulation</div>
+      <div class="tags">
+        <span class="tag">Cadence Virtuoso</span><span class="tag">Cadence Innovus</span>
+        <span class="tag">HSPICE</span><span class="tag">LTSpice</span>
+        <span class="tag">MATLAB</span><span class="tag">AutoCAD</span>
+      </div>
+    </div>
+    <div class="skill-card glass fade-up">
+      <div class="skill-icon">💻</div>
+      <div class="skill-name">Programming &amp; HDL</div>
+      <div class="tags">
+        <span class="tag">SystemVerilog</span><span class="tag">Verilog</span>
+        <span class="tag">Python</span><span class="tag">Embedded C</span>
+      </div>
+    </div>
+    <div class="skill-card glass fade-up">
+      <div class="skill-icon">🔬</div>
+      <div class="skill-name">ASIC Design Flow</div>
+      <div class="tags">
+        <span class="tag">RTL Synthesis</span><span class="tag">Place &amp; Route</span>
+        <span class="tag">DRC / LVS</span><span class="tag">Parasitic Extraction</span><span class="tag">CTS</span>
+      </div>
+    </div>
+    <div class="skill-card glass fade-up">
+      <div class="skill-icon">🛠️</div>
+      <div class="skill-name">Tools</div>
+      <div class="tags">
+        <span class="tag">Design Compiler</span><span class="tag">Calibre</span>
+        <span class="tag">ModelSim</span><span class="tag">Automation Anywhere</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+
+<section class="content" id="projects">
+  <div class="sec-label">// 02 — Work</div>
+  <h2>Featured <span class="g">Projects</span></h2>
+  <div class="projects-grid">
+
+```
+<div class="proj-card glass fade-up">
+  <div class="proj-num">PROJECT 01 · MAY 2026</div>
+  <div class="proj-title">ASIC Accelerator for Graph Convolutional Neural Networks</div>
+  <div class="proj-date">Arizona State University</div>
+  <ul class="proj-bullets">
+    <li>Sequential Load / Parallel Compute architecture with 8-state FSM (IDLE → READ_COO → FEATURES → WEIGHTS → TRANSFORM → COMBINE → ARGMAX → FINISH)</li>
+    <li>1,728 parallel multipliers completing FM × WM in a single clock cycle at 1000 MHz · latency: 100.502 ns</li>
+    <li>COO-based sparse aggregation — non-zero edges only for maximum hardware efficiency</li>
+    <li>Full APR in Innovus · DRC/LVS clean in Cadence Virtuoso</li>
+  </ul>
+  <div class="proj-metrics">
+    <div class="metric"><span class="metric-val">1000 MHz</span><span class="metric-lbl">Clock</span></div>
+    <div class="metric"><span class="metric-val">0.045 mm²</span><span class="metric-lbl">Area</span></div>
+    <div class="metric"><span class="metric-val">1.776 mW</span><span class="metric-lbl">Power</span></div>
+    <div class="metric"><span class="metric-val">32,835</span><span class="metric-lbl">Gates</span></div>
+  </div>
+</div>
+
+<div class="proj-card glass fade-up">
+  <div class="proj-num">PROJECT 02 · MAR 2026</div>
+  <div class="proj-title">2-Bit Adder — Full ASIC Flow (Synthesis + APR)</div>
+  <div class="proj-date">Arizona State University</div>
+  <ul class="proj-bullets">
+    <li>RTL synthesis with Synopsys Design Compiler targeting ASAP7 7nm PDK standard cells</li>
+    <li>Functional verification in ModelSim pre- and post-synthesis</li>
+    <li>Full APR: floorplanning, placement, CTS, routing — clean DRC verification</li>
+    <li>GDS exported to Cadence Virtuoso for LVS — complete RTL-to-GDS flow</li>
+  </ul>
+  <div class="proj-metrics">
+    <div class="metric"><span class="metric-val">7nm</span><span class="metric-lbl">Technology</span></div>
+    <div class="metric"><span class="metric-val">RTL→GDS</span><span class="metric-lbl">Full Flow</span></div>
+    <div class="metric"><span class="metric-val">DRC/LVS</span><span class="metric-lbl">Clean</span></div>
+  </div>
+</div>
+
+<div class="proj-card glass fade-up">
+  <div class="proj-num">PROJECT 03 · MAR 2026</div>
+  <div class="proj-title">NAND2xp5 Standard Cell — 7nm FinFET</div>
+  <div class="proj-date">Arizona State University</div>
+  <ul class="proj-bullets">
+    <li>Designed NAND2xp5 standard cell using ASAP7 PDK with all relevant linear interconnects</li>
+    <li>DRC and LVS clean verified using Calibre on Cadence Virtuoso</li>
+    <li>Parasitic extraction to evaluate pre/post layout delays and key performance metrics</li>
+  </ul>
+  <div class="proj-metrics">
+    <div class="metric"><span class="metric-val">7nm</span><span class="metric-lbl">FinFET</span></div>
+    <div class="metric"><span class="metric-val">DRC/LVS</span><span class="metric-lbl">Clean</span></div>
+  </div>
+</div>
+
+<div class="proj-card glass fade-up">
+  <div class="proj-num">PROJECT 04 · DEC 2025</div>
+  <div class="proj-title">D Flip-Flop Design &amp; Layout Verification</div>
+  <div class="proj-date">Arizona State University</div>
+  <ul class="proj-bullets">
+    <li>NMOS/PMOS characterization via Ids–Vds and Ids–Vgs simulations</li>
+    <li>CMOS inverter and NAND gate design with VTC and propagation delay analysis</li>
+    <li>Custom layout with DRC and LVS clean verification</li>
+  </ul>
+  <div class="proj-metrics">
+    <div class="metric"><span class="metric-val">Custom</span><span class="metric-lbl">Layout</span></div>
+    <div class="metric"><span class="metric-val">DRC/LVS</span><span class="metric-lbl">Verified</span></div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+
+<section class="content" id="education">
+  <div class="sec-label">// 03 — Background</div>
+  <h2>Education &amp; <span class="g">Certifications</span></h2>
+  <div class="edu-grid">
+    <div class="edu-card glass fade-up">
+      <div class="edu-school">Arizona State University · Tempe, AZ</div>
+      <div class="edu-degree">M.S. Computer Engineering</div>
+      <div class="edu-detail">Specialization: Electrical Engineering<br>Aug 2025 – May 2027</div>
+      <div class="edu-gpa">GPA: 3.32</div>
+    </div>
+    <div class="edu-card glass fade-up">
+      <div class="edu-school">Vellore Institute of Technology · Chennai, India</div>
+      <div class="edu-degree">B.Tech. Electronics &amp; Communication Engg.</div>
+      <div class="edu-detail">Sep 2021 – Jul 2025<br>Digital Systems · VLSI · Networks</div>
+    </div>
+  </div>
+  <div style="margin-top:1.5rem">
+    <div class="glass fade-up" style="padding:1.5rem;border-radius:16px">
+      <div style="font-weight:700;margin-bottom:0.8rem;font-size:0.9rem">🏅 Certifications</div>
+      <div class="tags">
+        <span class="tag">Automation Anywhere RPA Professional</span>
+        <span class="tag">Machine Learning</span>
+        <span class="tag">Deep Learning</span>
+        <span class="tag">Fine-Tuning LLMs</span>
+        <span class="tag">Computer Vision</span>
+        <span class="tag">Intel Pi-thon 2023</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+
+<div id="contact-sec" class="content">
+  <div style="text-align:center;margin-bottom:1.5rem">
+    <div class="sec-label" style="text-align:center">// 04 — Connect</div>
+    <h2 style="text-align:center">Let's <span class="g">Work Together</span></h2>
+  </div>
+  <div class="contact-card glass fade-up">
+    <p style="color:var(--muted);font-size:0.9rem">Open to internship opportunities in EE, VLSI, and ASIC design.</p>
+    <a href="mailto:rakeshrammagesh95@gmail.com" class="contact-email">rakeshrammagesh95@gmail.com</a>
+    <p style="color:var(--muted);font-size:0.85rem;font-family:'JetBrains Mono',monospace">602.642.2552 · U.S. Citizen</p>
+    <div class="contact-links">
+      <a href="https://linkedin.com/in/rakesh-ram-magesh-7a32791a6" target="_blank">LinkedIn ↗</a>
+      <a href="mailto:rakeshrammagesh95@gmail.com">Email ↗</a>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 · RAKESHRAM MAGESH · VLSI · ASIC · 7nm FinFET</footer>
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 100);
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
